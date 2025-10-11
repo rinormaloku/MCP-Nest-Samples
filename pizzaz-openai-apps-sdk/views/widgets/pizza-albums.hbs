@@ -1,0 +1,193 @@
+<div id="pizzaz-albums-widget" class="albums-container">
+  <style>
+    .albums-container {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      width: 100%;
+      background: white;
+      padding: 24px;
+    }
+
+    .albums-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0 0 8px 0;
+    }
+
+    .albums-subtitle {
+      font-size: 16px;
+      color: rgba(0, 0, 0, 0.6);
+      margin: 0 0 32px 0;
+    }
+
+    .albums-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .album-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .album-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .album-cover {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+    }
+
+    .album-info {
+      padding: 16px;
+    }
+
+    .album-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin: 0 0 8px 0;
+    }
+
+    .album-count {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.6);
+      margin: 0 0 12px 0;
+    }
+
+    .album-photos-preview {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .photo-thumbnail {
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .photo-thumbnail-more {
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .album-view-btn {
+      width: 100%;
+      padding: 10px;
+      background: #F46C21;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-top: 12px;
+    }
+
+    .album-view-btn:hover {
+      opacity: 0.9;
+    }
+
+    .album-view-btn:active {
+      opacity: 1;
+    }
+
+    .albums-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    @media (max-width: 640px) {
+      .albums-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .albums-container {
+        padding: 16px;
+      }
+
+      .albums-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+
+  <h1 class="albums-title">Pizza Photo Albums</h1>
+  <p class="albums-subtitle">Browse through our collection of pizza moments</p>
+
+  {{#if albums.length}}
+    <div class="albums-grid">
+      {{#each albums}}
+        <div class="album-card" data-album-id="{{id}}" onclick="handleAlbumClick('{{id}}', '{{title}}')">
+          <img src="{{cover}}" alt="{{title}}" class="album-cover" />
+          <div class="album-info">
+            <h3 class="album-title">{{title}}</h3>
+            <p class="album-count">{{photos.length}} {{#if (eq photos.length 1)}}photo{{else}}photos{{/if}}</p>
+
+            <div class="album-photos-preview">
+              {{#each photos}}
+                {{#if (lt @index 3)}}
+                  <img src="{{url}}" alt="{{title}}" class="photo-thumbnail" />
+                {{/if}}
+              {{/each}}
+              {{#if (gt photos.length 3)}}
+                <div class="photo-thumbnail-more">+{{subtract photos.length 3}}</div>
+              {{/if}}
+            </div>
+
+            <button type="button" class="album-view-btn" onclick="event.stopPropagation(); handleViewAlbum('{{id}}', '{{title}}')">
+              View Album
+            </button>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="albums-empty">
+      <p>No albums found</p>
+    </div>
+  {{/if}}
+
+  <script>
+    (function() {
+      window.handleAlbumClick = function(albumId, albumTitle) {
+        console.log('Album clicked:', albumId, albumTitle);
+        const card = document.querySelector(`[data-album-id="${albumId}"]`);
+        if (card) {
+          card.style.background = 'rgba(244, 108, 33, 0.05)';
+          setTimeout(() => {
+            card.style.background = 'white';
+          }, 300);
+        }
+      };
+
+      window.handleViewAlbum = function(albumId, albumTitle) {
+        console.log('View album:', albumId, albumTitle);
+        alert(`Opening album: ${albumTitle}\n\nIn production, this would open a full-screen photo gallery via OpenAI Apps SDK.`);
+      };
+    })();
+  </script>
+</div>

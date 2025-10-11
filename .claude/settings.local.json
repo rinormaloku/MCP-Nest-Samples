@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run build)",
+      "Bash(npm start)",
+      "Bash(curl:*)",
+      "Bash(cat:*)",
+      "Bash(pkill:*)",
+      "Bash(PORT=8001 npm start)",
+      "Bash(PORT=8002 npm start:*)",
+      "Read(//tmp/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
