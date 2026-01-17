@@ -1,0 +1,360 @@
+<div id="pizzaz-list-widget" class="list-container">
+  <style>
+    .list-container {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      width: 100%;
+      background: white;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 24px;
+      overflow: hidden;
+      padding: 0 16px 8px;
+    }
+
+    .list-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      padding: 16px 0;
+    }
+
+    .list-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+    }
+
+    .list-title-section {
+      flex: 1;
+    }
+
+    .list-main-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin: 0;
+    }
+
+    .list-subtitle {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.6);
+      margin: 4px 0 0 0;
+    }
+
+    .topping-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 14px;
+      background: #F46C21;
+      color: white;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .list-save-btn-desktop {
+      display: none;
+    }
+
+    .list-save-btn {
+      padding: 6px 16px;
+      background: #F46C21;
+      color: white;
+      border-radius: 20px;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .list-save-btn:hover {
+      opacity: 0.9;
+    }
+
+    .list-save-btn:active {
+      opacity: 1;
+    }
+
+    .list-items {
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+    }
+
+    .list-item {
+      padding: 0 12px;
+      margin: 0 -8px;
+      border-radius: 16px;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    .list-item:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .list-item-content {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      gap: 8px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      padding: 12px 0;
+    }
+
+    .list-item:last-child .list-item-content {
+      border-bottom: none;
+    }
+
+    .list-item-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .list-item-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .list-item-thumbnail {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      flex-shrink: 0;
+    }
+
+    .list-item-rank {
+      width: 12px;
+      text-align: right;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.4);
+      display: none;
+    }
+
+    .list-item-details {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .list-item-name {
+      font-weight: 500;
+      font-size: 14px;
+      color: #1a1a1a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .list-item-meta {
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgba(0, 0, 0, 0.7);
+      font-size: 14px;
+    }
+
+    .list-item-rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .star-icon {
+      width: 12px;
+      height: 12px;
+      color: #1a1a1a;
+    }
+
+    .list-item-city-desktop {
+      display: none;
+    }
+
+    .list-item-city-mobile {
+      white-space: nowrap;
+    }
+
+    .list-item-action {
+      padding: 8px 12px;
+      white-space: nowrap;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .plus-icon {
+      width: 20px;
+      height: 20px;
+      color: #1a1a1a;
+    }
+
+    .list-empty {
+      padding: 24px;
+      text-align: center;
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    .list-save-btn-mobile {
+      padding: 0;
+      margin-top: 8px;
+    }
+
+    .list-save-btn-mobile button {
+      width: 100%;
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+
+    @media (min-width: 640px) {
+      .list-container {
+        border-radius: 32px;
+      }
+
+      .list-logo {
+        width: 72px;
+        height: 72px;
+      }
+
+      .list-main-title {
+        font-size: 20px;
+      }
+
+      .list-save-btn-desktop {
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 8px;
+        flex: 1;
+      }
+
+      .list-item-thumbnail {
+        width: 44px;
+        height: 44px;
+      }
+
+      .list-item-rank {
+        display: block;
+      }
+
+      .list-item-name {
+        font-size: 16px;
+      }
+
+      .list-item-details {
+        padding-left: 4px;
+      }
+
+      .list-item-city-desktop {
+        display: block;
+        text-align: right;
+        padding: 8px 12px;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.6);
+        white-space: nowrap;
+        flex: 1;
+      }
+
+      .list-item-city-mobile {
+        display: none;
+      }
+
+      .list-save-btn-mobile {
+        display: none;
+      }
+    }
+  </style>
+
+  <div class="list-header">
+    <div
+      class="list-logo"
+      style="background-image: url('https://persistent.oaistatic.com/pizzaz/title.png')"
+    ></div>
+    <div class="list-title-section">
+      <h2 class="list-main-title">{{title}}</h2>
+      <p class="list-subtitle">{{subtitle}}</p>
+      {{#if topping}}
+        <div style="margin-top: 8px;">
+          <span class="topping-badge">🍕 {{topping}}</span>
+        </div>
+      {{/if}}
+    </div>
+    <div class="list-save-btn-desktop">
+      <button type="button" class="list-save-btn" onclick="handleSaveList()">
+        Save List
+      </button>
+    </div>
+  </div>
+
+  <div class="list-items">
+    {{#if places.length}}
+      {{#each places}}
+        <div class="list-item" data-place-id="{{id}}" onclick="handlePlaceClick('{{id}}', '{{name}}')">
+          <div class="list-item-content">
+            <div class="list-item-main">
+              <div class="list-item-inner">
+                <img src="{{thumbnail}}" alt="{{name}}" class="list-item-thumbnail" />
+                <div class="list-item-rank">{{addOne @index}}</div>
+                <div class="list-item-details">
+                  <div class="list-item-name">{{name}}</div>
+                  <div class="list-item-meta">
+                    <div class="list-item-rating">
+                      <svg class="star-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                      </svg>
+                      <span>{{rating}}</span>
+                    </div>
+                    <div class="list-item-city-mobile">{{city}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="list-item-city-desktop">{{city}}</div>
+            <div class="list-item-action">
+              <svg class="plus-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    {{else}}
+      <div class="list-empty">
+        No pizzerias found.
+      </div>
+    {{/if}}
+  </div>
+
+  <div class="list-save-btn-mobile">
+    <button type="button" class="list-save-btn" onclick="handleSaveList()">
+      Save List
+    </button>
+  </div>
+
+  <script>
+    (function() {
+      window.handleSaveList = function() {
+        console.log('Save list clicked');
+        alert('List saved!\n\nIn production, this would save to your collection via OpenAI Apps SDK.');
+      };
+
+      window.handlePlaceClick = function(placeId, placeName) {
+        console.log('Place clicked:', placeId, placeName);
+        const item = document.querySelector(`[data-place-id="${placeId}"]`);
+        if (item) {
+          item.style.background = 'rgba(244, 108, 33, 0.1)';
+          setTimeout(() => {
+            item.style.background = '';
+          }, 300);
+        }
+      };
+    })();
+  </script>
+</div>

@@ -9,12 +9,20 @@ import { registerHandlebarsHelpers } from './widgets/handlebars-helpers';
 @Module({
   imports: [
     McpModule.forRoot({
-      name: 'pizzaz-nestjs',
+      name: 'pizzaz-mcp-apps-ext',
       version: '0.1.0',
       transport: [McpTransportType.STREAMABLE_HTTP],
       capabilities: {
         resources: {},
         tools: {},
+        experimental: {
+          // Advertise support for MCP Apps Extension (io.modelcontextprotocol/ui)
+          extensions: {
+            'io.modelcontextprotocol/ui': {
+              mimeTypes: ['text/html;profile=mcp-app'],
+            },
+          },
+        },
       },
       streamableHttp: {
         enableJsonResponse: false,

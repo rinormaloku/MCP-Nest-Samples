@@ -1,0 +1,325 @@
+<div id="pizzaz-carousel-widget" class="carousel-container">
+  <style>
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      background: white;
+      padding: 20px 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .carousel-header {
+      padding: 0 20px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .topping-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 14px;
+      background: #F46C21;
+      color: white;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .carousel-viewport {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .carousel-track {
+      display: flex;
+      gap: 16px;
+      transition: transform 0.3s ease-out;
+      padding: 0 20px;
+    }
+
+    .place-card {
+      min-width: 220px;
+      max-width: 220px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    .place-card img {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 16px;
+      object-fit: cover;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .place-info {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .place-name {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #1a1a1a;
+    }
+
+    .place-meta {
+      font-size: 12px;
+      margin-top: 4px;
+      color: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .star-icon {
+      width: 12px;
+      height: 12px;
+      fill: currentColor;
+    }
+
+    .place-description {
+      font-size: 14px;
+      margin-top: 8px;
+      color: rgba(0, 0, 0, 0.8);
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .learn-more-btn {
+      margin-top: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 16px;
+      background: #F46C21;
+      color: white;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .learn-more-btn:hover {
+      opacity: 0.9;
+    }
+
+    .learn-more-btn:active {
+      opacity: 1;
+    }
+
+    .carousel-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: white;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s;
+    }
+
+    .carousel-button:hover {
+      background: white;
+    }
+
+    .carousel-button:disabled {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .carousel-button-prev {
+      left: 8px;
+    }
+
+    .carousel-button-next {
+      right: 8px;
+    }
+
+    .carousel-gradient-left,
+    .carousel-gradient-right {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 12px;
+      z-index: 5;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .carousel-gradient-left {
+      left: 0;
+      border-left: 1px solid rgba(0, 0, 0, 0.15);
+      background: linear-gradient(to right, rgba(0, 0, 0, 0.1), transparent);
+      mask-image: linear-gradient(to bottom, transparent 0%, white 30%, white 70%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, white 30%, white 70%, transparent 100%);
+    }
+
+    .carousel-gradient-right {
+      right: 0;
+      border-right: 1px solid rgba(0, 0, 0, 0.15);
+      background: linear-gradient(to left, rgba(0, 0, 0, 0.1), transparent);
+      mask-image: linear-gradient(to bottom, transparent 0%, white 30%, white 70%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, white 30%, white 70%, transparent 100%);
+    }
+
+    .carousel-gradient-left.hidden,
+    .carousel-gradient-right.hidden {
+      opacity: 0;
+    }
+
+    @media (max-width: 640px) {
+      .carousel-track {
+        padding: 0 20px;
+      }
+
+      .place-card {
+        min-width: 65vw;
+        max-width: 220px;
+      }
+    }
+  </style>
+
+  {{#if topping}}
+    <div class="carousel-header">
+      <span class="topping-badge">🍕 {{topping}}</span>
+    </div>
+  {{/if}}
+
+  <div class="carousel-viewport">
+    <div class="carousel-track" id="carousel-track">
+      {{#each places}}
+        <div class="place-card">
+          <div>
+            <img src="{{thumbnail}}" alt="{{name}}" />
+          </div>
+          <div class="place-info">
+            <div class="place-name">{{name}}</div>
+            <div class="place-meta">
+              <svg class="star-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+              <span>{{rating}}</span>
+              {{#if price}}<span>· {{price}}</span>{{/if}}
+              <span>· San Francisco</span>
+            </div>
+            {{#if description}}
+              <div class="place-description">{{description}}</div>
+            {{/if}}
+            <div>
+              <button type="button" class="learn-more-btn" onclick="handleLearnMore('{{name}}')">
+                Learn more
+              </button>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+
+    <div class="carousel-gradient-left" id="gradient-left"></div>
+    <div class="carousel-gradient-right" id="gradient-right"></div>
+
+    <button
+      type="button"
+      class="carousel-button carousel-button-prev"
+      id="prev-btn"
+      aria-label="Previous"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+
+    <button
+      type="button"
+      class="carousel-button carousel-button-next"
+      id="next-btn"
+      aria-label="Next"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+  </div>
+
+  <script>
+    (function() {
+      const track = document.getElementById('carousel-track');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const gradientLeft = document.getElementById('gradient-left');
+      const gradientRight = document.getElementById('gradient-right');
+
+      let currentIndex = 0;
+      const cardWidth = 220 + 16; // card width + gap
+      const cards = track.querySelectorAll('.place-card');
+      const maxIndex = Math.max(0, cards.length - Math.floor(track.offsetWidth / cardWidth));
+
+      function updateCarousel() {
+        const offset = currentIndex * cardWidth;
+        track.style.transform = `translateX(-${offset}px)`;
+
+        // Update button states
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex >= maxIndex;
+
+        // Update gradients
+        gradientLeft.className = currentIndex === 0 ? 'carousel-gradient-left hidden' : 'carousel-gradient-left';
+        gradientRight.className = currentIndex >= maxIndex ? 'carousel-gradient-right hidden' : 'carousel-gradient-right';
+      }
+
+      prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          updateCarousel();
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (currentIndex < maxIndex) {
+          currentIndex++;
+          updateCarousel();
+        }
+      });
+
+      // Handle window resize
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          currentIndex = 0;
+          updateCarousel();
+        }, 250);
+      });
+
+      // Initial update
+      updateCarousel();
+
+      // Make handleLearnMore globally available
+      window.handleLearnMore = function(placeName) {
+        console.log('Learn more about:', placeName);
+        alert(`Learn more about ${placeName}\n\nIn production, this would open details or trigger an OpenAI Apps SDK action.`);
+      };
+    })();
+  </script>
+</div>

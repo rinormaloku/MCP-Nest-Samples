@@ -1,0 +1,445 @@
+<link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet' />
+<script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
+
+<div id="pizzaz-map-widget" class="map-container">
+  <style>
+    .map-container {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      width: 100%;
+      height: 480px;
+      position: relative;
+      background: white;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 24px;
+      overflow: hidden;
+    }
+
+    .map-sidebar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 300px;
+      background: white;
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+      z-index: 10;
+    }
+
+    .map-sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .map-sidebar-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0 0 8px 0;
+    }
+
+    .map-sidebar-subtitle {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.6);
+      margin: 0;
+    }
+
+    .map-place-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .map-place-item {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .map-place-item:hover {
+      background: rgba(244, 108, 33, 0.05);
+    }
+
+    .map-place-item.active {
+      background: rgba(244, 108, 33, 0.1);
+    }
+
+    .map-place-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin: 0 0 4px 0;
+    }
+
+    .map-place-info {
+      font-size: 13px;
+      color: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .map-star-icon {
+      width: 12px;
+      height: 12px;
+      fill: #F46C21;
+    }
+
+    .map-view {
+      position: absolute;
+      left: 300px;
+      right: 0;
+      top: 0;
+      bottom: 0;
+    }
+
+    #mapbox-container {
+      width: 100%;
+      height: 100%;
+    }
+
+    .map-detail-panel {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      width: 280px;
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      z-index: 20;
+    }
+
+    .map-detail-panel.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .map-detail-image {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 12px;
+      object-fit: cover;
+      margin-bottom: 12px;
+    }
+
+    .map-detail-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0 0 8px 0;
+    }
+
+    .map-detail-rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.7);
+      margin-bottom: 8px;
+    }
+
+    .map-detail-desc {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.8);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .map-detail-btn {
+      width: 100%;
+      padding: 10px;
+      background: #F46C21;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .map-detail-btn:hover {
+      opacity: 0.9;
+    }
+
+    .map-close-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.1);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .map-close-btn:hover {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .map-container {
+        height: 400px;
+        width: 100%;
+      }
+
+      .map-sidebar {
+        width: 150px;
+        height: 100%;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        border-right: 1px solid rgba(0, 0, 0, 0.1);
+        border-bottom: none;
+      }
+
+      .map-sidebar-header {
+        padding: 12px;
+      }
+
+      .map-sidebar-title {
+        font-size: 14px;
+        margin: 0 0 4px 0;
+      }
+
+      .map-sidebar-subtitle {
+        font-size: 11px;
+      }
+
+      .map-place-list {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .map-place-item {
+        padding: 10px 12px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .map-place-name {
+        font-size: 13px;
+        margin: 0 0 4px 0;
+      }
+
+      .map-place-info {
+        font-size: 11px;
+        flex-wrap: wrap;
+      }
+
+      .map-view {
+        left: 150px;
+        right: 0;
+        top: 0;
+        bottom: 0;
+      }
+
+      .map-detail-panel {
+        width: calc(100% - 32px);
+        max-width: 240px;
+        right: 16px;
+        top: 16px;
+        padding: 16px;
+      }
+
+      .map-detail-image {
+        aspect-ratio: 1;
+        margin-bottom: 8px;
+      }
+
+      .map-detail-name {
+        font-size: 15px;
+      }
+
+      .map-detail-rating {
+        font-size: 12px;
+      }
+
+      .map-detail-desc {
+        font-size: 12px;
+        margin-bottom: 12px;
+      }
+
+      .map-detail-btn {
+        padding: 8px;
+        font-size: 13px;
+      }
+    }
+  </style>
+
+  <div class="map-sidebar">
+    <div class="map-sidebar-header">
+      <h2 class="map-sidebar-title">Pizza Places</h2>
+      <p class="map-sidebar-subtitle">San Francisco, CA</p>
+    </div>
+    <ul class="map-place-list">
+      {{#each places}}
+        <li class="map-place-item" data-place-id="{{id}}" onclick="selectPlace('{{id}}')">
+          <h3 class="map-place-name">{{name}}</h3>
+          <div class="map-place-info">
+            <svg class="map-star-icon" viewBox="0 0 24 24">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            <span>{{rating}}</span>
+            {{#if price}}<span>· {{price}}</span>{{/if}}
+            <span>· {{city}}</span>
+          </div>
+        </li>
+      {{/each}}
+    </ul>
+  </div>
+
+  <div class="map-view">
+    <div id="mapbox-container"></div>
+
+    <div class="map-detail-panel" id="detail-panel">
+      <button class="map-close-btn" onclick="closeDetail()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // Mapbox access token
+      mapboxgl.accessToken = 'pk.eyJ1IjoiZXJpY25pbmciLCJhIjoiY21icXlubWM1MDRiczJvb2xwM2p0amNyayJ9.n-3O6JI5nOp_Lw96ZO5vJQ';
+
+      const places = {{{json places}}};
+      let selectedPlaceId = null;
+      let map = null;
+      let markers = [];
+
+      // Initialize Mapbox map
+      function initMap() {
+        if (!places || places.length === 0) {
+          console.warn('No places to display on map');
+          return;
+        }
+
+        // Create map centered on first place or San Francisco
+        const firstCoords = places[0]?.coords || [-122.4194, 37.7749];
+
+        map = new mapboxgl.Map({
+          container: 'mapbox-container',
+          style: 'mapbox://styles/mapbox/streets-v12',
+          center: firstCoords,
+          zoom: 12,
+          attributionControl: false
+        });
+
+        // Add markers for each place
+        places.forEach(place => {
+          if (place.coords && place.coords.length === 2) {
+            const marker = new mapboxgl.Marker({
+              color: '#F46C21'
+            })
+              .setLngLat(place.coords)
+              .addTo(map);
+
+            // Add click handler to marker
+            const el = marker.getElement();
+            if (el) {
+              el.style.cursor = 'pointer';
+              el.addEventListener('click', () => {
+                selectPlace(place.id);
+              });
+            }
+
+            markers.push({ marker, place });
+          }
+        });
+
+        // Fit map to show all markers
+        if (places.length > 1) {
+          const coords = places.map(p => p.coords).filter(c => c && c.length === 2);
+          if (coords.length > 0) {
+            const bounds = coords.reduce(
+              (b, c) => b.extend(c),
+              new mapboxgl.LngLatBounds(coords[0], coords[0])
+            );
+            map.fitBounds(bounds, { padding: 60, animate: false });
+          }
+        }
+      }
+
+      window.selectPlace = function(placeId) {
+        selectedPlaceId = placeId;
+        const place = places.find(p => p.id === placeId);
+        if (!place) return;
+
+        // Update sidebar selection
+        document.querySelectorAll('.map-place-item').forEach(item => {
+          item.classList.toggle('active', item.dataset.placeId === placeId);
+        });
+
+        // Pan map to selected place
+        if (map && place.coords) {
+          map.flyTo({
+            center: place.coords,
+            zoom: 14,
+            speed: 1.2,
+            curve: 1.6
+          });
+        }
+
+        // Show detail panel
+        showDetail(place);
+      };
+
+      window.closeDetail = function() {
+        document.getElementById('detail-panel').classList.remove('visible');
+        document.querySelectorAll('.map-place-item').forEach(item => {
+          item.classList.remove('active');
+        });
+        selectedPlaceId = null;
+      };
+
+      function showDetail(place) {
+        const detailContent = document.getElementById('detail-content');
+        detailContent.innerHTML = `
+          <img src="${place.thumbnail}" alt="${place.name}" class="map-detail-image" />
+          <h3 class="map-detail-name">${place.name}</h3>
+          <div class="map-detail-rating">
+            <svg class="map-star-icon" viewBox="0 0 24 24">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            <span>${place.rating}</span>
+            ${place.price ? `<span>· ${place.price}</span>` : ''}
+            <span>· ${place.city}</span>
+          </div>
+          ${place.description ? `<p class="map-detail-desc">${place.description}</p>` : ''}
+          <button class="map-detail-btn" onclick="handleGetDirections('${place.id}', '${place.name}')">
+            Get Directions
+          </button>
+        `;
+
+        document.getElementById('detail-panel').classList.add('visible');
+      }
+
+      window.handleGetDirections = function(placeId, placeName) {
+        console.log('Get directions to:', placeId, placeName);
+        alert(`Getting directions to ${placeName}\n\nIn production, this would open directions via OpenAI Apps SDK.`);
+      };
+
+      // Initialize map when script loads
+      if (typeof mapboxgl !== 'undefined') {
+        initMap();
+      } else {
+        console.error('Mapbox GL JS not loaded');
+      }
+    })();
+  </script>
+</div>
